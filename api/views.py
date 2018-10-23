@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from django.http import HttpResponse
 import requests
+from time import localtime, strftime
 
 # Create your views here.
 
@@ -14,6 +15,12 @@ payload = {
 
 url_device = 'api.pripoj.me/device/get'
 url_message = 'api.pripoj.me/message/get/'
+
+def temp_compensation(weight, temperature):
+    return weight - (temperature*beta0)
+
+def uncomp_weight(adc_readout):
+    return (adc_readout/calibration_index) - zero_offset
 
 def device(request):
     hive_device = requests.get(url_device, params=payload).json()
@@ -51,19 +58,23 @@ def device(request):
                 url_message += i['records']['dev_eui']
 
 def message(request):
+    payload[0]['stop'] = strftime("%Y-%m-%dT%H:%M%S", localtime())
+    payload[0]['limit'] = 10
     hive_message = requests.get(url_message, params=payload).json()
-        if hive_message['_meta']['status'] == 'ERROR':
-                return JsonResponse(
-                    {
-                        'data_is_valid': False,
-                        'error_code': i['records']['errorCode'],
-                        'user_msg': i['records']['userMessage'],
-                        'dev_msg': i['records']['devMessage'],
-                        'msg_more': i['records']['more'],
-                        'app_code': i['records']['applicationCode']
-                    },
-                    safe=False,
-                    json_dumps_params={'indent': 4}
-                )
+       if hive_message['_meta']['status'] == 'ERROR':
+            return JsonResponse(
+                {
+                    'data_is_valid': False,
+                    'error_code': hive_message['records']['errorCode'],
+                    'user_msg': hive_message['records']['userMessage'],
+                    'dev_msg': hive_message['records']['devMessage'],
+                    'msg_more': hive_message['records']['more'],
+                    'app_code': hive_message['records']['applicationCode']
+                },
+                safe=False,
+                json_dumps_params={'indent': 4}
+            )
         else:
-            #toto dokoncit ziskani message z API
+            for record in hive_message['records']:
+                timecodes = record['time']
+                messages = record['payloadHex']
