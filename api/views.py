@@ -125,57 +125,59 @@ def message(request):
     to False and then in jQuery this is used to replace whole webpage with
     an error message
     """
-       if hive_message['_meta']['status'] == 'ERROR':
-            return JsonResponse(
-                {
-                    'data_is_valid': False,
-                    'error_code': hive_message['records']['errorCode'],
-                    'user_msg': hive_message['records']['userMessage'],
-                    'dev_msg': hive_message['records']['devMessage'],
-                    'msg_more': hive_message['records']['more'],
-                    'app_code': hive_message['records']['applicationCode']
-                },
-                safe=False,
-                json_dumps_params={'indent': 4}
-            )
-        else:
-            data_count = int(hive_message['_meta']['count'])
-            work_data = [[record['time'], record['payloadHex']] for record in hive_message['records']]
+    if hive_message['_meta']['status'] == 'ERROR':
+        return JsonResponse(
+            {
+                'data_is_valid': False,
+                'error_code': hive_message['records']['errorCode'],
+                'user_msg': hive_message['records']['userMessage'],
+                'dev_msg': hive_message['records']['devMessage'],
+                'msg_more': hive_message['records']['more'],
+                'app_code': hive_message['records']['applicationCode']
+            },
+            safe=False,
+            json_dumps_params={'indent': 4}
+        )
+    else:
+        data_count = int(hive_message['_meta']['count'])
+        work_data = [[record['time'], record['payloadHex']] for record in hive_message['records']]
 
-            msg_len = len(work_data[0][1])//2
-            messages = [i[1][j:j+2] for i in work_data for j in range(0, len(i[1]), 2)]
-            messages = [messages[i:i+msg_len] for i in range(0, len(messages), msg_len)]
-            """
-            Yes, I know, the whole next section is for changing endianess of
-            parts of a message, but it is easier to realise in what format are
-            data returned (hint: it's string) and then use Python's strenght in
-            manipulation this data type
-            """
-            hive_humid = [int(messages[i][2], 16) for i in range(0, data_count)]
-            status = [bin(int(messages[i][13], 16)) for i in range(0, data_count)]
+        timestamps = [i[0] for i in work_data]
 
-            frame_id = [int(messages[i][1] + messages[i][0], 16) for i in range(0, data_count)]
-            hive_temp = [int(messages[i][3] + messages[i][2], 16)/10 for i in range(0, data_count)]
-            pressure = [int(messages[i][6] + messages[i][5], 16) for i in range(0, data_count)]
-            bat_volt = [int(messages[i][12] + messages[i][11], 16)/1000 for i in range(0, data_count)]
+        msg_len = len(work_data[0][1])//2
+        messages = [i[1][j:j+2] for i in work_data for j in range(0, len(i[1]), 2)]
+        messages = [messages[i:i+msg_len] for i in range(0, len(messages), msg_len)]
+        """
+        Yes, I know, the whole next section is for changing endianess of
+        parts of a message, but it is easier to realise in what format are
+        data returned (hint: it's string) and then use Python's strenght in
+        manipulation this data type
+        """
+        hive_humid = [int(messages[i][2], 16) for i in range(0, data_count)]
+        status = [bin(int(messages[i][13], 16)) for i in range(0, data_count)]
 
-            weight = [uncomp_weight(int(messages[i][10] + messages[i][9] +
+        frame_id = [int(messages[i][1] + messages[i][0], 16) for i in range(0, data_count)]
+        hive_temp = [int(messages[i][3] + messages[i][2], 16)/10 for i in range(0, data_count)]
+        pressure = [int(messages[i][6] + messages[i][5], 16) for i in range(0, data_count)]
+        bat_volt = [int(messages[i][12] + messages[i][11], 16)/1000 for i in range(0, data_count)]
+
+        weight = [uncomp_weight(int(messages[i][10] + messages[i][9] +
                                         messages[i][8] + messages[i][7], 16)) for i in range(0, data_count)]
-            hive_weight = [temp_compensation(weight[i], hive_temp[i]) for i in range(0, data_count)]
+        hive_weight = [temp_compensation(weight[i], hive_temp[i]) for i in range(0, data_count)]
 
-            for i in range(0, data_count):
-                return JsonResponse(
-                {
-                    'time': work_data[i][0],
-                    'frame_id': frame_id[i],
-                    'temperature': hive_temp[i],
-                    'humidity': hive_humid[i],
-                    'pressure': pressure[i],
-                    'hive_weight': hive_weight[i],
-                    'bat_voltage': bat_volt[i],
-                    'device_status': char_status(status[i]),
-                    'network_status': net_status(status[i])
-                },
-                safe=False,
-                json_dumps_params={'indent': 4}
-                )
+        for i in range(0, data_count):
+            return JsonResponse(
+            {
+                'time': work_data[i][0],
+                'frame_id': frame_id[i],
+                'temperature': hive_temp[i],
+                'humidity': hive_humid[i],
+                'pressure': pressure[i],
+                'hive_weight': hive_weight[i],
+                'bat_voltage': bat_volt[i],
+                'device_status': char_status(status[i]),
+                'network_status': net_status(status[i])
+            },
+            safe=False,
+            json_dumps_params={'indent': 4}
+        )
