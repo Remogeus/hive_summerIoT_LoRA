@@ -41,39 +41,43 @@ def message(request):
                     for i in work_data for j in range(0, len(i[1]), 2)]
         messages = [messages[i:i + msg_len]
                     for i in range(0, len(messages), msg_len)]
+
         """
         Yes, I know, the whole next section is for changing endianess of
         parts of a message, but it is easier to realise in what format are
         data returned (hint: it's string) and then use Python's strenght in
         manipulation this data type
         """
-        hive_humid = [int(messages[i][2], 16) for i in range(0, data_count)]
-        status = [bin(int(messages[i][13], 16)) for i in range(0, data_count)]
+        hive_humid = [int(messages[i][2], 16) for i in range(data_count)]
+        status = [bin(int(messages[i][13], 16)) for i in range(data_count)]
 
         frame_id = [int(messages[i][1] + messages[i][0], 16)
-                    for i in range(0, data_count)]
+                    for i in range(data_count)]
         hive_temp = [int(messages[i][3] + messages[i][2], 16) /
-                     10 for i in range(0, data_count)]
+                     10 for i in range(data_count)]
         pressure = [int(messages[i][6] + messages[i][5], 16)
-                    for i in range(0, data_count)]
+                    for i in range(data_count)]
         bat_volt = [int(messages[i][12] + messages[i][11], 16) /
-                    1000 for i in range(0, data_count)]
+                    1000 for i in range(data_count)]
 
-        weight = [uncomp_weight(int(messages[i][10] + messages[i][9] +
-                                    messages[i][8] + messages[i][7], 16)) for i in range(0, data_count)]
+        weight = [
+            uncomp_weight(
+                int(''.join(reversed(messages[i][7:11])), 16),
+            ) for i in range(data_count)
+        ]
         hive_weight = [temp_compensation(
-            weight[i], hive_temp[i]) for i in range(0, data_count)]
+            weight[i], hive_temp[i]) for i in range(data_count)]
 
         return_data = {
-            'time': [timestamps[i] for i in range(0, data_count)],
-            'frame_id': [frame_id[i] for i in range(0, data_count)],
-            'temperature': [hive_temp[i] for i in range(0, data_count)],
-            'humidity': [hive_humid[i] for i in range(0, data_count)],
-            'pressure': [pressure[i] for i in range(0, data_count)],
-            'hive_weight': [hive_weight[i] for i in range(0, data_count)],
-            'bat_voltage': [bat_volt[i] for i in range(0, data_count)],
-            'device_status': [char_status(status[i]) for i in range(0, data_count)],
-            'network_status': [net_status(status[i]) for i in range(0, data_count)]
+            'time': [timestamps[i] for i in range(data_count)],
+            'frame_id': [frame_id[i] for i in range(data_count)],
+            'temperature': [hive_temp[i] for i in range(data_count)],
+            'humidity': [hive_humid[i] for i in range(data_count)],
+            'pressure': [pressure[i] for i in range(data_count)],
+            'hive_weight': [hive_weight[i] for i in range(data_count)],
+            'bat_voltage': [bat_volt[i] for i in range(data_count)],
+            'device_status': [char_status(status[i]) for i in range(data_count)],
+            'network_status': [net_status(status[i]) for i in range(data_count)]
         }
         return_data = [dict(zip(return_data.keys(), i)) for i in zip(*return_data.values())]
 
