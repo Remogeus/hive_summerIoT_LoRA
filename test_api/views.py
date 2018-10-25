@@ -381,7 +381,7 @@ def char_status(status):
         2: 'charging',
         3: 'discharged'
     }
-    return possible_status.get(status & 0x03)
+    return possible_status.get(int(status, 2) & 0x03)
 
 
 def net_status(status):
@@ -398,7 +398,7 @@ def net_status(status):
         8: 'joined',
         12: 'join failed'
     }
-    return possible_status.get(status & 0x0c)
+    return possible_status.get(int(status, 2) & 0x0c)
 
 
 def device(request):
@@ -436,8 +436,8 @@ def device(request):
 
 
 def message(request):
-    payload[0]['stop'] = strftime("%Y-%m-%dT%H:%M%S", localtime())
-    payload[0]['limit'] = 10
+    payload['stop'] = strftime("%Y-%m-%dT%H:%M%S", localtime())
+    payload['limit'] = 10
     hive_message = test_data_msg
     """
     testing if the data are valid, if not, error flag 'data_is_valid' is set
