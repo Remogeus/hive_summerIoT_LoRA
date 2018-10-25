@@ -1,5 +1,4 @@
-function create_table_head()
-{
+function create_table_head() {
     var head = '';
     head += '    <tr>';
     head += '        <th>time</th>';
@@ -15,11 +14,9 @@ function create_table_head()
     return head;
 }
 
-function create_table_content(data)
-{
+function create_table_content(data) {
     var table_content = '';
-    for (var i in data)
-    {
+    for (var i in data) {
         table_content += '<tr>';
         table_content += '<td>' + data[i].time + '</td>';
         table_content += '<td>' + data[i].frame_id + '</td>';
@@ -35,8 +32,7 @@ function create_table_content(data)
     return table_content;
 }
 
-function create_table(data)
-{
+function create_table(data) {
     var table = '';
     table += '<table>';
     table += create_table_head();
@@ -45,8 +41,7 @@ function create_table(data)
     $('#package').html(table);
 }
 
-function error_message(data)
-{
+function error_message(data) {
     var content = '';
     content += '<div id=\"error\">';
     content += '<h1> Error ' + data.error_code + ' - ' + data.user_msg + '</h1>';
@@ -57,24 +52,78 @@ function error_message(data)
     $('#package').html(content);
 }
 
+function create_xy(data, x_name, y_name) {
+    var xy = Array();
+    for (var i in data) {
+        xy.push({
+            'x': data[i][x_name],
+            'y': data[i][y_name]
+        });
+    }
+    return xy;
+}
+
+function create_array(data, name) {
+    var values = Array();
+    for (var i in data) {
+        values.push(data[i][name]);
+    }
+    return values;
+}
+
+
+function update_chart(chart_name, x, y) {
+    var myChart = new Chart($('#' + chart_name), {
+        type: 'line',
+        data: {
+            labels: x,
+            datasets: [{
+                label: 'temperature',
+                data: y,
+                borderColor: 'green',
+            }]
+        },
+        options: {
+            responsive: false,
+            animation: {
+                duration: 0, // general animation time
+            },
+            hover: {
+                animationDuration: 0, // duration of animations when hovering an item
+            },
+            responsiveAnimationDuration: 0, // animation duration after a resize
+            scales: {
+                xAxes: [{
+                    stacked: true
+                }],
+                yAxes: [{
+                    stacked: true
+                }]
+            }
+        }
+    });
+}
+
 $(document).ready(function() {
 
-    function GetHiveMessage() {
+    function get_json_message() {
         $.getJSON("/test_api/message", function(data) {
 
-            if ('data_is_valid' in data)
-            {
-                if (!data['data_is_valid'])
-                {
+            if ('data_is_valid' in data) {
+                if (!data['data_is_valid']) {
                     error_message(data);
                     return;
                 }
-            }
-            else
+            } else
                 create_table(data);
+            //var xy = create_xy(data, 'time', 'temperature');
+            var x = create_array(data, 'time');
+            var y = create_array(data, 'temperature');
+            update_chart('my_chart', x, y);
         });
-        setTimeout(GetHiveMessage, 1000);
+        setTimeout(get_json_message, 1000);
     };
 
-    setTimeout(GetHiveMessage, 1000);
+    setTimeout(get_json_message, 1000);
+    //my_graph();
 });
