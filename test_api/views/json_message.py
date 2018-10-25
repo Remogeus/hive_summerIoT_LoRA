@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from time import localtime, strftime
 
 from .config_api import payload
-from .test_data import test_data_msg
+from .test_data import test_data_error, test_data_msg_ok
 from .status_messages import net_status, char_status
 from .conversion import uncomp_weight, temp_compensation
 
@@ -10,7 +10,8 @@ from .conversion import uncomp_weight, temp_compensation
 def message(request):
     payload['stop'] = strftime("%Y-%m-%dT%H:%M%S", localtime())
     payload['limit'] = 10
-    hive_message = test_data_msg
+    hive_message = test_data_msg_ok
+    # hive_message = test_data_error
     """
     testing if the data are valid, if not, error flag 'data_is_valid' is set
     to False and then in jQuery this is used to replace whole webpage with
@@ -53,12 +54,12 @@ def message(request):
 
         frame_id = [int(messages[i][1] + messages[i][0], 16)
                     for i in range(data_count)]
-        hive_temp = [int(messages[i][3] + messages[i][2], 16) /
-                     10 for i in range(data_count)]
+        hive_temp = [int(messages[i][3] + messages[i][2], 16) / 10
+                     for i in range(data_count)]
         pressure = [int(messages[i][6] + messages[i][5], 16)
                     for i in range(data_count)]
-        bat_volt = [int(messages[i][12] + messages[i][11], 16) /
-                    1000 for i in range(data_count)]
+        bat_volt = [int(messages[i][12] + messages[i][11], 16) / 1000
+                    for i in range(data_count)]
 
         weight = [
             uncomp_weight(
@@ -79,6 +80,7 @@ def message(request):
             'device_status': [char_status(status[i]) for i in range(data_count)],
             'network_status': [net_status(status[i]) for i in range(data_count)]
         }
-        return_data = [dict(zip(return_data.keys(), i)) for i in zip(*return_data.values())]
+        return_data = [dict(zip(return_data.keys(), i))
+                       for i in zip(*return_data.values())]
 
         return JsonResponse(return_data, safe=False, json_dumps_params={'indent': 4})

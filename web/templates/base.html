@@ -4,37 +4,23 @@
 <html lang="cs-CZ">
 
 <head>
-  <title>Moje první Django šablona</title>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <!-- <script src="{% static 'js/down_device.js' %}"></script> -->
-  <script src="{% static 'js/down_message.js' %}"></script>
+    {% block head %}
+
+    <title>Moje první Django šablona</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- <script src="{% static 'js/down_device.js' %}"></script> -->
+    <script src="{% static 'js/down_message.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
+
+    {% endblock %}
 </head>
 
 <body>
-  <div id="main_body">
-  <h1>Základní stránka</h1>
-  <p>
-    Vítejte na mé malé hloupé stránce... ;)
-  </p>
-  <table>
-    <th>
-      <td>Proměnná</td>
-      <td>hodnota</td>
-    </th>
-    <tr>
-      <td>jméno</td>
-      <td id="hive_name">-</td>
-    </tr>
-    <tr>
-      <td>hmotnost</td>
-      <td id="hive_weight">-</td>
-    </tr>
-    <tr>
-      <td>baterie</td>
-      <td id="hive_battery">-</td>
-    </tr>
-  </table>
-</div>
+    {% block body %}
+
+    <p>Náš super odstavec :)</p>
+
+    {% endblock %}
 </body>
 
 </html>

@@ -1,0 +1,15 @@
+#error {
+    color: red;
+}
+
+body {
+    background: black;
+    color: green;
+}
+
+tr:nth-child(odd) {
+    background-color: #000;
+}
+tr:nth-child(even) {
+    background-color: #111;
+}

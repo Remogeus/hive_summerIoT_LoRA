@@ -1,11 +1,11 @@
 from django.http import JsonResponse
 
 # from .config_api import url_message
-from .test_data import test_data_dev
+from .test_data import test_data_error
 
 
 def device(request):
-    hive_device = test_data_dev
+    hive_device = test_data_error
     if hive_device['_meta']['status'] == 'ERROR':
         return JsonResponse(
             {

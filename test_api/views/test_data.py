@@ -18,7 +18,7 @@
 }
 """
 
-test_data_dev = {
+test_data_error = {
     "_meta": {
         "status": "ERROR",
         "count": 1
@@ -32,7 +32,7 @@ test_data_dev = {
     }
 }
 
-test_data_msg = {
+test_data_msg_ok = {
     "_meta":
     {
         "status": "SUCCESS",
