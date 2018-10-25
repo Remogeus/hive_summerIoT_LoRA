@@ -2,6 +2,25 @@ from django.http import JsonResponse
 from django.http import HttpResponse
 from time import localtime, strftime
 
+"""
+{
+"_meta":{
+    "status":"SUCCESS",
+    "count":1
+    },
+"records":
+[
+{
+"devEUI":"4786E6ED00350042",
+"projectId":"TEST",
+"description":"Testovací teplotní čidlo",
+"model":"RHF1S001",
+"vendor":"Rising HF"
+}
+]
+}
+"""
+
 test_data_dev = {
     "_meta": {
         "status": "ERROR",
