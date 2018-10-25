@@ -4,7 +4,7 @@
 
 if [ ! -d ".venv" ]; then
   echo ".venv not exist"
-  .venv.sh
+  ./venv.sh
 fi
 
 echo "activate venv"
