@@ -1,18 +1,25 @@
+function error_message(data) {
+  var content = '';
+  content += '<div id=\"error\">';
+  content += '<h1> Error ' + data.error_code + ' - ' + data.user_msg + '</h1>';
+  content += '<p>' + data.dev_msg + ' ' + data.msg_more + '</p>';
+  content += '<p><code> Application code: ' + data.app_code + '</code></p>';
+  content += '</div>';
+
+  $('#package').html(content);
+}
+
 $(document).ready(function() {
-  function GetDevData() {
+  function get_json_device() {
     $.getJSON("/test_api/device", function(data) {
-      //$("#hive_name").text(data.name);
-      //$("#hive_weight").text(data.weight);
-      //$("#hive_battery").text(data.battery);
-      if($.text(data.data_is_valid) == true){
-        $("#error_code").text(data.error_code);
-        $("#user_msg").text(data.user_msg);
-        $("#dev_msg").text(data.dev_msg);
-        $("#msg_more").text(data.msg_more);
-        $("#app_code").text(data.app_code);
+      if ('data_is_valid' in data) {
+        if (!data['data_is_valid']) {
+          error_message(data);
+          return;
+        }
       }
     });
-    setTimeout(GetDevData, 1000);
+    setTimeout(get_json_device, 1000);
   };
-  setTimeout(GetDevData, 1000);
+  setTimeout(get_json_device, 1000);
 });

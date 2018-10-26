@@ -6,7 +6,7 @@
 <head>
     {% block head %}
 
-    <title>Moje první Django šablona</title>
+    <title>Hive monitoring</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
     <!-- <script src="{% static 'js/down_device.js' %}"></script> -->
@@ -17,9 +17,10 @@
 </head>
 
 <body>
+  <frameset cols="*,500,*">
     {% block body %}
 
-    <p>Náš super odstavec :)</p>
+    <p>-</p>
 
     {% endblock %}
 </body>

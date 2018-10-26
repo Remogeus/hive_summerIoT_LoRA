@@ -2,11 +2,20 @@
 {% load static %}
 
 {% block body %}
-    <div id="package">
-        Jsem jako nepopsaná kniha :D
-    </div>
 
-    <div id="images">
-        <canvas id="my_chart" width="1000" height="500%"></canvas>
-    </div>
+
+<div id="package">
+  -
+</div>
+<div id="images" class="collumn">
+  <div class="row">
+  <canvas id="temp_chart"></canvas>
+</div>
+  <div class="row">
+    <canvas id="hum_chart"></canvas>
+  </div>
+</div>
+
+</div>
+
 {% endblock %}
