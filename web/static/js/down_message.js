@@ -68,7 +68,7 @@ function create_array(data, name) {
   for (var i in data) {
     values.push(data[i][name])
   }
-  return values
+  return values.reverse()
 }
 
 
@@ -113,7 +113,7 @@ function update_chart(chart_name, x, y, line_color, label) {
 
 $(document).ready(function() {
   function get_json_message() {
-    $.getJSON("/test_api/message", function(data) {
+    $.getJSON("/api/message", function(data) {
 
       if ('data_is_valid' in data) {
         if (!data['data_is_valid']) {
@@ -131,7 +131,7 @@ $(document).ready(function() {
       }
 
     })
-    setTimeout(get_json_message, 1000)
+    setTimeout(get_json_message, 30000)
   }
 
   setTimeout(get_json_message, 1000) //

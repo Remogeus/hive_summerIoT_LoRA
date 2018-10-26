@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from time import localtime, strftime
+
 
 import requests
 
@@ -9,9 +9,7 @@ from .conversion import uncomp_weight, temp_compensation
 
 
 def message(request):
-    payload['stop'] = strftime("%Y-%m-%dT%H:%M%S", localtime())
-    payload['limit'] = 10
-    hive_message = requests.get(url_message, params=payload).json()
+    hive_message = requests.get(url_message, params=payload, verify = False).json()
     """
     testing if the data are valid, if not, error flag 'data_is_valid' is set
     to False and then in jQuery this is used to replace whole webpage with
@@ -32,7 +30,7 @@ def message(request):
         )
     else:
         data_count = int(hive_message['_meta']['count'])
-        work_data = [[record['time'], record['payloadHex']]
+        work_data = [[record['createdAt'], record['payloadHex']]
                      for record in hive_message['records']]
 
         timestamps = [i[0] for i in work_data]
@@ -52,13 +50,13 @@ def message(request):
         hive_humid = [int(messages[i][4], 16) for i in range(data_count)]
         status = [bin(int(messages[i][13], 16)) for i in range(data_count)]
 
-        frame_id = [int(''.join(reversed(message[i][:2])), 16)
+        frame_id = [int(messages[i][1] + messages[i][0], 16)
                     for i in range(data_count)]
-        hive_temp = [int(''.join(reversed(message[i][2:4])), 16) / 10
+        hive_temp = [int(messages[i][3] + messages[i][2], 16) / 10
                      for i in range(data_count)]
-        pressure = [int(''.join(reversed(message[i][5:7])), 16)
+        pressure = [int(messages[i][6] + messages[i][5], 16)
                     for i in range(data_count)]
-        bat_volt = [int(''.join(reversed(message[i][11:13])), 16) / 1000
+        bat_volt = [int(messages[i][12] + messages[i][11], 16) / 1000
                     for i in range(data_count)]
 
         weight = [
@@ -66,8 +64,8 @@ def message(request):
                 int(''.join(reversed(messages[i][7:11])), 16),
             ) for i in range(data_count)
         ]
-        hive_weight = [temp_compensation(
-            weight[i], hive_temp[i]) for i in range(data_count)]
+        hive_weight = [round(temp_compensation(
+            weight[i], hive_temp[i]),2) for i in range(data_count)]
 
         return_data = {
             'time': [timestamps[i] for i in range(data_count)],

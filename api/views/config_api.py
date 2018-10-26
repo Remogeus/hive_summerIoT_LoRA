@@ -1,3 +1,5 @@
+from time import localtime, strftime
+
 """
 Calibration values taken from the manual for the device, found on
 https://pripoj.me/wp-content/uploads/2017/08/Payload.pdf
@@ -8,10 +10,11 @@ beta0 = 0.022
 
 # Payload with user token
 payload = {
-    'token': 'yjHRpdbhce4VdJ43kTJ0RwqYpbIqQJDR'
+    'token': 'yjHRpdbhce4VdJ43kTJ0RwqYpbIqQJDR',
+    'limit': 10,
+    'stop': strftime("%Y-%m-%dT%H:%M:%S", localtime())
 }
 
 
 # URLs for communication with API
-url_device = 'api.pripoj.me/device/get'
-url_message = 'api.pripoj.me/message/get/'
+url_message = 'http://api.pripoj.me/message/get/0004A30B001F216B'
