@@ -131,7 +131,7 @@ $(document).ready(function() {
       }
 
     })
-    setTimeout(get_json_message, 30000)
+    setTimeout(get_json_message, 300000)
   }
 
   setTimeout(get_json_message, 1000) //
