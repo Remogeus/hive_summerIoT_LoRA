@@ -1,15 +1,15 @@
 function create_table_head() {
   var head = ''
   head += '    <tr>'
-  head += '        <th>Time</th>'
-  head += '        <th>Record ID</th>'
-  head += '        <th>Temperature (°C)</th>'
-  head += '        <th>Humidity (%)</th>'
-  head += '        <th>Pressure (hPa)</th>'
-  head += '        <th>Hive weight (kg)</th>'
-  head += '        <th>Battery voltage (V)</th>'
-  head += '        <th>Device status</th>'
-  head += '        <th>Network status</th>'
+  head += '        <th>Čas</th>'
+  head += '        <th>Číslo záznamu</th>'
+  head += '        <th>Teplota (°C)</th>'
+  head += '        <th>Vlhkost (%)</th>'
+  head += '        <th>Tlak (hPa)</th>'
+  head += '        <th>Hmotnost úlu (kg)</th>'
+  head += '        <th>Napětí baterie (V)</th>'
+  head += '        <th>Stav baterie</th>'
+  head += '        <th>Stav sítě</th>'
   head += '    </tr>'
   return head
 }
@@ -125,9 +125,9 @@ $(document).ready(function() {
         // var xy= create_xy(data, 'time', 'temperature')
         var x = create_array(data, 'time')
         var y = create_array(data, 'temperature')
-        update_chart('temp_chart', x, y, 'red', 'temperature')
+        update_chart('temp_chart', x, y, 'red', 'teplota')
         y = create_array(data, 'humidity')
-        update_chart('hum_chart', x, y, 'blue', 'humidity')
+        update_chart('hum_chart', x, y, 'blue', 'vlhkost')
       }
 
     })
