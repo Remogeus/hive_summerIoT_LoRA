@@ -52,17 +52,6 @@ function error_message(data) {
   $('#package').html(content)
 }
 
-function create_xy(data, x_name, y_name) {
-  var xy = Array()
-  for (var i in data) {
-    xy.push({
-      'x': data[i][x_name],
-      'y': data[i][y_name]
-    })
-  }
-  return xy
-}
-
 function create_array(data, name) {
   var values = Array()
   for (var i in data) {

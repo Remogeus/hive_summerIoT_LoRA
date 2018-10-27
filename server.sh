@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # actavated venv ans run django server
-# wykys 2018
+# wykys and remogeus 2018
 
 if [ ! -d ".venv" ]; then
   echo ".venv not exist"
@@ -12,3 +12,6 @@ echo "activate venv"
 
 echo "run server"
 ./manage.py runserver 0.0.0.0:8000
+
+echo "run browser"
+xdg-open localhost:8000/show_data.html
